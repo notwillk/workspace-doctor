@@ -17,6 +17,7 @@ RUN apt-get update \
     gnupg \
     just \
     lsb-release \
+    ssh \
     sudo \
     yq \
   && rm -rf /var/lib/apt/lists/*

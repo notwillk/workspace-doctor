@@ -1,0 +1,3 @@
+rules:
+  - name: "Check that ENV var FANCY is 'very'"
+    check: '[ "$FANCY" = "very" ]'
