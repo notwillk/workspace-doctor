@@ -15,7 +15,17 @@ import (
 	"github.com/notwillk/workspace-doctor/schema"
 )
 
-const configFlagDescription = "path to workspace config file (defaults to .workspace-doctor.yaml/.yml)"
+const (
+	configFlagDescription     = "path to workspace config file (defaults to .workspace-doctor.yaml/.yml)"
+	defaultInitConfigFilename = ".workspace-doctor.config.yaml"
+	defaultInitConfigTemplate = `# workspace-doctor configuration
+rules:
+  - name: "Example rule"
+    severity: info
+    check: |
+      echo "Replace this with a useful check"
+`
+)
 
 // RootCommand wires the CLI surface area together.
 type RootCommand struct {
@@ -58,6 +68,8 @@ func (r *RootCommand) Run(args []string) int {
 	switch cmd {
 	case "diagnose":
 		return r.runDiagnose(cmdArgs, globals)
+	case "init":
+		return r.runInit(cmdArgs, globals)
 	case "schema":
 		return r.runSchema(cmdArgs)
 	case "version", "--version":
@@ -148,6 +160,64 @@ func (r *RootCommand) runDiagnose(args []string, globals globalFlags) int {
 	}
 
 	return r.summarizeReport(report, noFail)
+}
+
+func (r *RootCommand) runInit(args []string, globals globalFlags) int {
+	flags := flag.NewFlagSet("init", flag.ContinueOnError)
+	flags.SetOutput(r.stderr)
+
+	if err := flags.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
+		return 2
+	}
+
+	if flags.NArg() > 0 {
+		fmt.Fprintf(r.stderr, "init does not accept positional arguments: %v\n", flags.Args())
+		return 2
+	}
+
+	path := globals.configPath
+	if path == "" {
+		path = defaultInitConfigFilename
+	}
+
+	if err := writeConfigTemplate(path); err != nil {
+		fmt.Fprintf(r.stderr, "init failed: %v\n", err)
+		return 2
+	}
+
+	fmt.Fprintf(r.stdout, "Created %s\n", path)
+	return 0
+}
+
+func writeConfigTemplate(path string) error {
+	if path == "" {
+		path = defaultInitConfigFilename
+	}
+
+	if info, err := os.Stat(path); err == nil {
+		if info.IsDir() {
+			return fmt.Errorf("%s is a directory", path)
+		}
+		return fmt.Errorf("%s already exists", path)
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("stat config: %w", err)
+	}
+
+	dir := filepath.Dir(path)
+	if dir != "" && dir != "." {
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			return fmt.Errorf("create config directory: %w", err)
+		}
+	}
+
+	content := defaultInitConfigTemplate
+	if !strings.HasSuffix(content, "\n") {
+		content += "\n"
+	}
+	return os.WriteFile(path, []byte(content), 0o644)
 }
 
 func (r *RootCommand) printUsage() {

@@ -1,7 +1,13 @@
 build:
+  @PATH="$(go env GOPATH)/bin:$PATH" goreleaser build --clean --snapshot --skip=validate
+
+compile:
   @mkdir -p dist
   @cd src && go build -o ../dist/workspace-doctor ./cmd/workspace-doctor
 
 dev:
   @echo "Watching src for changes. Press Ctrl+C to stop."
-  @find src -type f | entr -r sh -c 'just build && echo "Rebuilt command"'
+  @find src -type f | entr -r sh -c 'just compile && echo "Rebuilt command"'
+
+release:
+  @PATH="$(go env GOPATH)/bin:$PATH" goreleaser release --clean

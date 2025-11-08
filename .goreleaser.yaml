@@ -1,0 +1,54 @@
+version: 2
+project_name: workspace-doctor
+
+builds:
+  - id: static
+    dir: ./src
+    main: ./cmd/workspace-doctor
+    binary: workspace-doctor
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -tags=netgo,osusergo,timetzdata
+    ldflags:
+      - -s -w
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+brews:
+  - name: workspace-doctor
+    ids:
+      - static
+    repository:
+      owner: notwillk
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: https://github.com/notwillk/workspace-doctor
+    description: "Lightweight CLI to diagnose local development workspaces."
+    license: MIT
+    install: |
+      bin.install "workspace-doctor"
+    test: |
+      system "#{bin}/workspace-doctor", "--version"
+
+nfpms:
+  - id: linux-packages
+    ids:
+      - static
+    package_name: workspace-doctor
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    bindir: /usr/local/bin
+    homepage: https://github.com/notwillk/workspace-doctor
+    maintainer: "notwillk <notwillk@users.noreply.github.com>"
+    description: "Lightweight CLI to diagnose local development workspaces."
+    license: MIT
+    section: utils
+    priority: optional
+    formats:
+      - deb
+      - rpm
