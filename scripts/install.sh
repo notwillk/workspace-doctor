@@ -23,10 +23,18 @@ if [ "$VERSION" = "latest" ]; then
     | sed -n 's/.*"tag_name": *"\(.*\)".*/\1/p')
 fi
 
-TARBALL="${BIN_NAME}_${VERSION}_${OS}_${ARCH}.tar.gz"
-URL="https://github.com/$REPO/releases/download/$VERSION/$TARBALL"
+if [ -z "$VERSION" ]; then
+  echo "Unable to determine version" >&2
+  exit 1
+fi
 
-echo "Installing $BIN_NAME $VERSION for $OS/$ARCH..."
+TAG="$VERSION"              # e.g. v0.1.0
+BASENAME_VERSION="${TAG#v}" # e.g. 0.1.0
+
+TARBALL="${BIN_NAME}_${BASENAME_VERSION}_${OS}_${ARCH}.tar.gz"
+URL="https://github.com/$REPO/releases/download/$TAG/$TARBALL"
+
+echo "Installing $BIN_NAME $TAG for $OS/$ARCH..."
 echo "Downloading: $URL"
 
 TMPDIR=$(mktemp -d)
