@@ -45,11 +45,13 @@ func NormalizeSeverity(value Severity) (Severity, bool) {
 	}
 }
 
+// todo: update diagnose command such that if outputs the hint if (1) a rule fails its check (not in fix mode) or (2) a fix command fails or the re-check fails.  It should output in addition to existing output
 type Rule struct {
 	Name     string   `json:"name,omitempty" yaml:"name,omitempty"`
 	Check    string   `json:"check" yaml:"check"`
 	Severity Severity `json:"severity,omitempty" yaml:"severity,omitempty"`
 	Fix      string   `json:"fix,omitempty" yaml:"fix,omitempty"`
+	Hint     string   `json:"hint,omitempty" yaml:"hint,omitempty"`
 }
 
 type Config struct {
