@@ -16,7 +16,7 @@ case "$ARCH" in
     ;;
 esac
 
-VERSION="${WORKSPACE_DOCTOR_VERSION:-latest}"
+VERSION="${CHECKSY_VERSION:-latest}"
 
 if [ "$VERSION" = "latest" ]; then
   VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \

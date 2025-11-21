@@ -2,7 +2,7 @@
 set -e
 
 BIN_NAME="checksy"
-TARGET="${WORKSPACE_DOCTOR_BIN_PATH:-/usr/local/bin/$BIN_NAME}"
+TARGET="${CHECKSY_BIN_PATH:-/usr/local/bin/$BIN_NAME}"
 
 echo "Uninstalling $BIN_NAME from $TARGET..."
 

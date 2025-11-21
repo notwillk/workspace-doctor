@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	configFlagDescription     = "path to workspace config file (defaults to .checksy.yaml/.yml)"
+	configFlagDescription     = "path to config file (defaults to .checksy.yaml)"
 	defaultInitConfigFilename = ".checksy.config.yaml"
 	defaultInitConfigTemplate = `# checksy configuration
 rules:
@@ -120,7 +120,7 @@ func (r *RootCommand) runDiagnose(args []string, globals globalFlags) int {
 		return 2
 	}
 	if resolvedConfigPath == "" {
-		fmt.Fprintln(r.stderr, "no configuration file found; specify --config or add .checksy.yaml/.yml to the workspace")
+		fmt.Fprintln(r.stderr, "no configuration file found; specify --config or add .checksy.yaml to the workspace")
 		return 2
 	}
 
@@ -251,8 +251,8 @@ func (r *RootCommand) printUsage() {
 	fmt.Fprintf(r.stdout, "  --config string   %s\n", configFlagDescription)
 	fmt.Fprintln(r.stdout)
 	fmt.Fprintln(r.stdout, "Available Commands:")
-	fmt.Fprintln(r.stdout, "  diagnose   Validate the workspace using config-defined rules")
-	fmt.Fprintln(r.stdout, "  schema     Print the JSON schema for workspace configuration")
+	fmt.Fprintln(r.stdout, "  diagnose   Run checks for config-defined rules")
+	fmt.Fprintln(r.stdout, "  schema     Print the JSON schema for configuration file")
 	fmt.Fprintln(r.stdout, "  version    Print the current build version")
 	fmt.Fprintln(r.stdout, "  help       Show this message")
 }

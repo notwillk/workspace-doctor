@@ -52,7 +52,7 @@ func ResolvePath(explicit string) (string, error) {
 	return "", nil
 }
 
-// Load reads, validates, and unmarshals the workspace configuration.
+// Load reads, validates, and unmarshals the configuration.
 func Load(path string) (*schemadef.Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
